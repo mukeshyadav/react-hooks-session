@@ -4,15 +4,25 @@ const App = () => {
   const [count, setCount] = useState(0);
   const [isOn, setIsOn] = useState(false);
 
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
   const incrementCount = () => {
     setCount(prevCount => prevCount + 1);
   };
 
   useEffect(() => {
     document.title = `I have clicked ${count} times.`;
-  });
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, [count]);
 
   const toggleLight = () => setIsOn(prevIsOn => !prevIsOn);
+
+  const handleMouseMove = event =>
+    setMousePosition({ x: event.pageX, y: event.pageY });
 
   return (
     <div className="wrapper">
@@ -30,6 +40,11 @@ const App = () => {
         }
         style={{ height: "50px", width: "50px", cursor: "pointer" }}
       />
+
+      <h2>Mouse Position</h2>
+      <p>
+        {JSON.stringify(mousePosition, null, 2)} <br />
+      </p>
     </div>
   );
 };
