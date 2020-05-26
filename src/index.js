@@ -2,13 +2,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 // import App from "./App";
-import Login from "./login";
+// import Login from "./login";
+import Register from "./register";
 import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
   <React.StrictMode>
     {/* <App /> */}
-    <Login />
+    {/* <Login /> */}
+    <Register />
   </React.StrictMode>,
   document.getElementById("root")
 );
