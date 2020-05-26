@@ -7,6 +7,17 @@ const App = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [status, setStatus] = useState(navigator.onLine);
 
+  const initialGeoLocationState = {
+    latitude: null,
+    longitude: null,
+    speed: null
+  };
+
+  const [{ latitude, longitude, speed }, setGeoLocation] = useState(
+    initialGeoLocationState
+  );
+  let mounted = true;
+
   const incrementCount = () => {
     setCount(prevCount => prevCount + 1);
   };
@@ -17,12 +28,26 @@ const App = () => {
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handeOffline);
 
+    navigator.geolocation.getCurrentPosition(handleGeoLocation);
+    const watchId = navigator.geolocation.watchPosition(handleGeoLocation);
+
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handeOffline);
+      navigator.geolocation.clearWatch(watchId);
+      mounted = false;
     };
   }, [count]);
+
+  const handleGeoLocation = event =>
+    mounted
+      ? setGeoLocation({
+          latitude: event.coords.latitude,
+          longitude: event.coords.longitude,
+          speed: event.coords.speed
+        })
+      : null;
 
   const toggleLight = () => setIsOn(prevIsOn => !prevIsOn);
 
@@ -37,7 +62,7 @@ const App = () => {
     <div className="wrapper">
       <h2>Counter</h2>
       <button onClick={incrementCount}>I clicked {count}</button>
-
+      <hr />
       <h2>Toggle Light</h2>
       <img
         onClick={toggleLight}
@@ -49,14 +74,21 @@ const App = () => {
         }
         style={{ height: "50px", width: "50px", cursor: "pointer" }}
       />
-
+      <hr />
       <h2>Mouse Position</h2>
       <p>
         {JSON.stringify(mousePosition, null, 2)} <br />
       </p>
-
+      <hr />
       <h2>Network Status</h2>
       <p>Status: {status ? "online" : "offline"}</p>
+      <hr />
+      <h2>GeoLocation</h2>
+      <p>
+        Latitude: {latitude} <br />
+        longitude: {longitude} <br />
+        speed: {speed}
+      </p>
     </div>
   );
 };
